@@ -1,0 +1,149 @@
+#!/bin/bash
+
+# Load Modules################################################################
+##                                                            ##
+##                    Campus Cluster                          ##
+##     Sample Hybrid MVAPICH2/OpenMP Job Batch Script         ##
+##                                                            ##
+## PBS Options                                                ##
+##                                                            ##
+##  option -l                                                 ##
+##    walltime: maximum wall clock time (hh:mm:ss)            ##
+##       nodes: number of 12-core(taub) nodes                 ##
+##                        16-core(golub) nodes                ##
+##                        20-core(golub) nodes                ##
+##         ppn: cores per node to use (1 thru 12) on taub     ##
+##                                    (1 thru 16) on golub    ##
+##                                    (1 thru 20) on golub    ##
+##                                                            ##
+##  option -N                                                 ##
+##    job name (default = name of script file)                ##
+##                                                            ##
+##  option -q                                                 ##
+##    queue name ( -q name_of_queue )                         ##
+##                                                            ##
+##  option -o                                                 ##
+##     filename for standard output at end of job             ##
+##     (default = <job_name>.o<job_id>).  File is written to  ##
+##     directory from which qsub was executed. Remove extra   ##
+##     "##" from the PBS -o line if you want to name your     ##
+##     own file.                                              ##
+##                                                            ##
+##  option -e                                                 ##
+##     filename for standard error at end of job              ##
+##     (default = <job_name>.e<job_id>).  File is written to  ##
+##     directory from which qsub was executed. Remove extra   ##
+##     "##" from the PBS -e line if you want to name your     ##
+##     own file.                                              ##
+##                                                            ##
+##  option -j                                                 ##
+##     Join the standard output and standard error streams    ##
+##     of the job                                             ##
+##     ( -j oe  merges stderr with stdout and generates a     ##
+##              stdout file <job_name>.o<job_id>              ##
+##       -j eo  merges stdout with stderr and generates a     ##
+##              stderr file <job_name>.e<job_id>  )           ##
+##                                                            ##
+##  option -m                                                 ##
+##     mail_options (email notifications)                     ##
+##     The mail_options argument is a string which consists   ##
+##     of either the single character "n", or one or more of  ##
+##     the characters "a", "b", and "e".                      ##
+##     ( -m a   Send mail when the job is aborted.            ##
+##       -m be  Send mail when the job begins execution and   ##
+##              when the job terminates.                      ##
+##       -m n   Do not send mail.  )                          ##
+##                                                            ##
+################################################################
+#
+#PBS -l walltime=0:30:00
+#PBS -l nodes=1:ppn=16
+#PBS -N pipeline
+#PBS -q secondary
+##PBS -j oe
+###PBS -o pipeline.out
+###PBS -e pipeline.err
+#PBS -m be
+#PBS -M subrahm2@illinois.edu
+#
+#####################################
+
+module load java
+module load python/2.7.8
+
+# Change to the directory from which the batch job was submitted
+cd $PBS_O_WORKDIR
+
+# Hard code and store paths needed for script
+OUTPUT_DIR_PREFIX=/home/subrahm2/scratch/output
+#mkdir $OUTPUT_DIR_PREFIX
+
+PASTA_DIR=/home/subrahm2/project-cse/Research/programs/pasta-code/pasta
+
+PRANK_DIR=/home/subrahm2/project-cse/Research/programs/prank/bin
+
+SCRIPTS_DIR=/home/subrahm2/project-cse/Research/research_scripts
+
+TEMP_RESULTS_DIR=/home/subrahm2/scratch/temp
+#mkdir $TEMP_RESULTS_DIR
+
+INPUT_SEQ_PATH_PREFIX=/home/subrahm2/project-cse/Research/data/100S1
+
+FAST_TREE_OUTPUT_PREFIX=/home/subrahm2/project-cse/Research/fast-tree-output
+#mkdir ${FAST_TREE_OUTPUT_PREFIX}
+
+FAST_TREE_PREFIX=/home/subrahm2/project-cse/Research/programs
+FINAL_OUTPUT_DIR=/home/subrahm2/scratch/final_output
+# Pasta-Prank Pipeline
+
+for i in R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10; do
+
+	INPUT_SEQ=${INPUT_SEQ_PATH_PREFIX}/${i}/rose.aln.true.fasta
+
+	OUTPUT_DIR=${OUTPUT_DIR_PREFIX}/${i}
+
+	PASTA_OUT=${OUTPUT_DIR_PREFIX}/${i}
+
+	PRANK_OUT=${OUTPUT_DIR_PREFIX}/${i}/prank_output
+
+	PRANK_PASTA_ALN={PRANK_OUT}/prank_aln_out_with_tree.best.fas
+	PASTA_ALN=${PASTA_OUT}/pastajob.marker001.new_input.aln
+	PRANK_ALN=${PRANK_OUT}/prank_aln_out_no_tree.best.fas
+
+	ACTUAL_TREE=${INPUT_SEQ_PATH_PREFIX}/${i}/rose.tt
+	PRANK_PASTA_OUT_FAST_TREE=/home/subrahm2/scratch/output/R0/fast_tree_out_prank_pasta
+	PRANK_OUT_FAST_TREE=/home/subrahm2/scratch/output/R0/fast_tree_out_prank
+	PASTA_OUT_FAST_TREE=/home/subrahm2/scratch/output/R0/fast_tree_out_pasta
+
+	mkdir -p ${PRANK_PASTA_OUT_FAST_TREE}
+	mkdir -p ${PRANK_OUT_FAST_TREE}
+	mkdir -p ${PASTA_OUT_FAST_TREE}
+
+
+	./${FAST_TREE_PREFIX}/FastTree -nt ${PRANK_PASTA_ALN} > ${PRANK_PASTA_OUT_FAST_TREE}
+	./${FAST_TREE_PREFIX}/FastTree -nt ${PASTA_ALN} > ${PASTA_OUT_FAST_TREE}
+	./${FAST_TREE_PREFIX}/FastTree -nt ${PRANK_ALN} > ${PRANK_OUT_FAST_TREE}
+
+
+	PASTA_OUT_COMPAREPL=/home/subrahm2/scratch/final_output/${i}/pasta/comparepl
+	PRANK_OUT_COMPAREPL=/home/subrahm2/scratch/final_output/${i}/prank/comparepl
+	PRANK_AND_PASTA_OUT_COMPAREPL=/home/subrahm2/scratch/final_output/${i}/pasta-prank/comparepl
+
+	mkdir -p ${PASTA_OUT_COMPAREPL}
+	mkdir -p ${PRANK_OUT_COMPAREPL}
+	mkdir -p ${PRANK_AND_PASTA_OUT_COMPAREPL}
+
+	./home/subrahm2/project-cse/Research/programs/CompareTree.pl -tree ${ACTUAL_TREE} -versus ${PRANK_PASTA_OUT_FAST_TREE} > ${PRANK_AND_PASTA_OUT_COMPAREPL}/prank_pasta_comparepl
+	./home/subrahm2/project-cse/Research/programs/CompareTree.pl -tree ${ACTUAL_TREE} -versus ${PASTA_OUT_FAST_TREE} > ${PASTA_OUT_COMPAREPL}/pasta_comparepl
+	./home/subrahm2/project-cse/Research/programs/CompareTree.pl -tree ${ACTUAL_TREE} -versus ${PRANK_OUT_FAST_TREE} > ${PRANK_OUT_COMPAREPL}/prank_comparepl
+
+
+
+
+
+
+
+
+
+
+done
