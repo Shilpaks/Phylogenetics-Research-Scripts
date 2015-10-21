@@ -125,13 +125,13 @@ for i in R10; do
 	mkdir -p ${PAGAN_OUT}
 
 	# run pagan with the true tree as the guide tree
-    ${PAGAN_DIR}/pagan -seqfile ${TEMP_RESULTS_DIR}/new_input -treefile ${INPUT_SEQ_PATH_PREFIX}/${i}/rose.tt > ${PAGAN_OUT}/pagan_aln_out_true_tree
+    ${PAGAN_DIR}/pagan --seqfile ${TEMP_RESULTS_DIR}/new_input --treefile ${INPUT_SEQ_PATH_PREFIX}/${i}/rose.tt > ${PAGAN_OUT}/pagan_aln_out_true_tree
 
 	#run pagan with the pasta tree as the guide tree
-	${PAGAN_DIR}/pagan -seqfile ${TEMP_RESULTS_DIR}/new_input -treefile ${TEMP_RESULTS_DIR}/new_guide_tree > ${PAGAN_OUT}/pagan_aln_out_with_tree
+	${PAGAN_DIR}/pagan --seqfile ${TEMP_RESULTS_DIR}/new_input --treefile ${TEMP_RESULTS_DIR}/new_guide_tree > ${PAGAN_OUT}/pagan_aln_out_with_tree
 
 	# run pagan with no guide tree
-	${PAGAN_DIR}/pagan -seqfile ${TEMP_RESULTS_DIR}/new_input > ${PAGAN_OUT}/pagan_aln_out_no_tree
+	${PAGAN_DIR}/pagan --seqfile ${TEMP_RESULTS_DIR}/new_input > ${PAGAN_OUT}/pagan_aln_out_no_tree
 
 
 	#run FastSP on the pagan-true-tree alignment
