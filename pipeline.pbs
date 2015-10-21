@@ -101,7 +101,7 @@ mkdir -p ${FINAL_OUTPUT_DIR}
 
 for i in R10 R11 R12 R13 R14 R15 R16 R17 R18 R19; do
 
-	INPUT_SEQ=${INPUT_SEQ_PATH_PREFIX}/${i}/cleaned.alignment.fasta
+	INPUT_SEQ=${INPUT_SEQ_PATH_PREFIX}/${i}/rose.aln.true.fasta
 
 	mkdir -p ${OUTPUT_DIR_PREFIX}/${i}
 	OUTPUT_DIR=${OUTPUT_DIR_PREFIX}/${i}
@@ -136,25 +136,25 @@ for i in R10 R11 R12 R13 R14 R15 R16 R17 R18 R19; do
 
 	#run FastSP on the pagan-true-tree alignment
 	mkdir -p ${FINAL_OUTPUT_DIR}/helpful_output/pagan-true-tree/FastSP_output
-	java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/cleaned.alignment.fasta -e ${PAGAN_OUT}/pagan_aln_out_true_tree.best.fas > ${FINAL_OUTPUT_DIR}/helpful_output/pagan-true-tree/FastSP_output/${i}.txt
+	java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/rose.aln.true.fasta -e ${PAGAN_OUT}/pagan_aln_out_true_tree.best.fas > ${FINAL_OUTPUT_DIR}/helpful_output/pagan-true-tree/FastSP_output/${i}.txt
 
 	# run FastSP on the pasta-true-tree alignment
 	 mkdir -p ${FINAL_OUTPUT_DIR}/helpful_output/pasta-true-tree/FastSP_output
-	 java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/cleaned.alignment.fasta -e ${PASTA_OUT}/true-tree-pasta/pastajob.marker001.new_input.aln > ${FINAL_OUTPUT_DIR}/helpful_output/pasta-true-tree/FastSP_output/${i}.txt
+	 java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/rose.aln.true.fasta -e ${PASTA_OUT}/true-tree-pasta/pastajob.marker001.new_input.aln > ${FINAL_OUTPUT_DIR}/helpful_output/pasta-true-tree/FastSP_output/${i}.txt
 
 	# run FastSP on pagan-pasta-tree alignment
 	mkdir -p ${FINAL_OUTPUT_DIR}/helpful_output/pasta-pagan/FastSP_output
 
-	java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/cleaned.alignment.fasta -e ${PAGAN_OUT}/pagan_aln_out_with_tree.best.fas > ${FINAL_OUTPUT_DIR}/helpful_output/pasta-pagan/FastSP_output/${i}.txt
+	java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/rose.aln.true.fasta -e ${PAGAN_OUT}/pagan_aln_out_with_tree.best.fas > ${FINAL_OUTPUT_DIR}/helpful_output/pasta-pagan/FastSP_output/${i}.txt
 
 
 	# run FastSP on pasta-no-tree alignment
 	mkdir -p ${FINAL_OUTPUT_DIR}/helpful_output/pasta/FastSP_output
 
-	java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/cleaned.alignment.fasta -e ${PASTA_OUT}/pastajob.marker001.new_input.aln > ${FINAL_OUTPUT_DIR}/helpful_output/pasta/FastSP_output/${i}.txt
+	java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/rose.aln.true.fasta -e ${PASTA_OUT}/pastajob.marker001.new_input.aln > ${FINAL_OUTPUT_DIR}/helpful_output/pasta/FastSP_output/${i}.txt
 
 	# run FastSP on pagan-no-tree alignment
 	mkdir -p ${FINAL_OUTPUT_DIR}/helpful_output/pagan/FastSP_output
-	java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/cleaned.alignment.fasta -e ${PAGAN_OUT}/pagan_aln_out_no_tree.best.fas > ${FINAL_OUTPUT_DIR}/helpful_output/pagan/FastSP_output/${i}.txt
+	java -jar ${FAST_TREE_PREFIX}/FastSP_1.6.0.jar -r ${INPUT_SEQ_PATH_PREFIX}/${i}/rose.aln.true.fasta -e ${PAGAN_OUT}/pagan_aln_out_no_tree.best.fas > ${FINAL_OUTPUT_DIR}/helpful_output/pagan/FastSP_output/${i}.txt
 
 done
